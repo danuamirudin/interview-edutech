@@ -16,12 +16,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GKE_SA_KEY }}
-
-      - name: Install Google Cloud SDK (gcloud)
+      - name: Install Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: 'latest'
@@ -37,6 +32,7 @@ jobs:
 
       - name: Copy Theme to WordPress Pod
         run: |
+          sudo apt-get update && sudo apt-get install -y unzip
           kubectl cp interview/helm/wordpress/themes/edu.zip default/$(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}"):/var/www/html/wp-content/themes/
 
       - name: Install and Activate Theme
