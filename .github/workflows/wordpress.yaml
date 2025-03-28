@@ -40,7 +40,7 @@ jobs:
       - name: Install and Activate Theme
         run: |
           kubectl exec  $(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}") -- bash -c "
-            sudo apt-get update && sudo apt-get install -y unzip
+            apt-get update && apt-get install -y unzip
             unzip -o /var/www/html/wp-content/themes/edu.zip -d /var/www/html/wp-content/themes/ &&
             wp theme activate edu --path=/var/www/html --url=https://darksoul.site
           "
