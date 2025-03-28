@@ -21,11 +21,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GKE_SA_KEY }}
 
-      - name: Install gke-gcloud-auth-plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y kubectl  google-cloud-cli
-           gcloud components install gke-gcloud-auth-plugin --quiet
+
       - name: Auth GKE
         run: |
           gcloud container clusters get-credentials interview-gke --region asia-southeast2 --project golden-resolver-455014-d8
