@@ -1,0 +1,49 @@
+name: WordPress CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  wordpress-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+      WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
+
+    steps:
+      # Checkout the repository
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      # Set up PHP environment for WP-CLI
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2.28'
+
+      # Install necessary dependencies
+      - name: Install WP-CLI
+        run: |
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+
+      # Install theme (unzip and activate)
+      - name: Install and Activate Theme
+        run: |
+          # Unzip the theme package to WordPress theme directory
+          unzip -o ./path/to/edu.zip -d /var/www/html/wp-content/themes/
+          
+          # Activate the theme using WP-CLI
+          wp theme activate edu --path=/var/www/html --url=https://darksoul.site --user=${WORDPRESS_USERNAME} --password=${WORDPRESS_PASSWORD}
+
+      # Optional: Clear cache, if any caching plugins or mechanisms are used
+      - name: Clear cache (optional)
+        run: |
+          wp cache flush --path=/var/www/html --url=https://darksoul.site --user=${WORDPRESS_USERNAME} --password=${WORDPRESS_PASSWORD}
