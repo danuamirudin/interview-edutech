@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   wordpress-theme-deploy:
@@ -34,15 +31,15 @@ jobs:
 
       - name: Copy Theme to WordPress Pod
         run: |
-          kubectl cp interview/helm/wordpress/themes/edu.zip default/$(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}"):/var/www/html/wp-content/themes/
+          kubectl cp interview/helm/wordpress/themes/pixgraphy.zip default/$(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}"):/var/www/html/wp-content/themes/
 
       - name: Install and Activate Theme
         run: |
           kubectl exec  $(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}") -- bash -c "
             apt-get update && apt-get install -y unzip
-            unzip -o /var/www/html/wp-content/themes/edu.zip -d /var/www/html/wp-content/themes/ &&
+            unzip -o /var/www/html/wp-content/themes/pixgraphy.zip -d /var/www/html/wp-content/themes/ &&
             curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&
             chmod +x wp-cli.phar &&
             mv wp-cli.phar /usr/local/bin/wp &&
-            wp theme activate education-zone --path=/var/www/html --url=https://darksoul.site --allow-root
+            wp theme activate pixgraphy --path=/var/www/html --url=https://darksoul.site --allow-root
           "

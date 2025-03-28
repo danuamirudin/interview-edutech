@@ -52,11 +52,10 @@ autoscaling:
 
 # Persistent Volume for WordPress
 persistence:
-  enabled: true
-  accessMode: ReadWriteOnce
-  size: 1Gi
-  storageClass: "standard"
+  claimName: wordpress-filestore-pvc
   mountPath: /var/www/html
+  mountName: wordpress-storage
+
 
 # MySQL Configuration connect SQL CLoud
 mysql:

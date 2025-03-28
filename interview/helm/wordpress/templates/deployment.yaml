@@ -37,8 +37,8 @@ spec:
           ports:
             - containerPort: 80  
           volumeMounts:
-            - name: {{ $.Values.appName }}-storage
-              mountPath: /var/www/html
+            - name: {{ $.Values.persistance.mountName }}
+              mountPath: {{ $.Values.persistance.mountPath }}
           resources:
             requests:
               cpu: "{{ .Values.resources.requests.cpu }}"
@@ -49,4 +49,4 @@ spec:
       volumes:
         - name: {{ $.Values.appName }}-storage
           persistentVolumeClaim:
-            claimName: {{ $.Values.appName }}-pvc
+            claimName: {{ $.Values.persistance.claimName }}
