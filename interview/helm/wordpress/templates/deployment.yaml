@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Values.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $.Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Values.appName }}
+    spec:
+      containers:
+        - name: {{ $.Values.appName }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: WORDPRESS_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_HOST   # Reference to DB_HOST key in the Secret
+            - name: WORDPRESS_DB_NAME
+              value: "wordpress"  
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USER   # Reference to DB_USER key in the Secret
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD  # Reference to DB_PASSWORD key in the Secret
+          ports:
+            - containerPort: 80  
+          volumeMounts:
+            - name: {{ $.Values.appName }}-storage
+              mountPath: /var/www/html
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              memory: "{{ .Values.resources.requests.memory }}"
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              memory: "{{ .Values.resources.limits.memory }}"
+      volumes:
+        - name: {{ $.Values.appName }}-storage
+          persistentVolumeClaim:
+            claimName: {{ $.Values.appName }}-pvc
