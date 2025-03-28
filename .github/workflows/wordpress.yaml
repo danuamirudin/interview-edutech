@@ -38,7 +38,9 @@ jobs:
       - name: Install and Activate Theme
         run: |
           # Unzip the theme package to WordPress theme directory
-          unzip -o .interview/helm/wordpress/themes/edu.zip -d /var/www/html/wp-content/themes/
+          ls
+          pwd
+          unzip -o interview/helm/wordpress/themes/edu.zip -d /var/www/html/wp-content/themes/
           
           # Activate the theme using WP-CLI
           wp theme activate edu --path=/var/www/html --url=https://darksoul.site --user=${WORDPRESS_USERNAME} --password=${WORDPRESS_PASSWORD}
