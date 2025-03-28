@@ -25,7 +25,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: 'latest'
-          project_id: golden-resolver-455014-d8
 
       - name: Auth GKE
         run: |
@@ -42,5 +41,8 @@ jobs:
           kubectl exec  $(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}") -- bash -c "
             apt-get update && apt-get install -y unzip
             unzip -o /var/www/html/wp-content/themes/edu.zip -d /var/www/html/wp-content/themes/ &&
+            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&
+            chmod +x wp-cli.phar &&
+            mv wp-cli.phar /usr/local/bin/wp &&
             wp theme activate edu --path=/var/www/html --url=https://darksoul.site
           "
