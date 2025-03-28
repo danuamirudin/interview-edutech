@@ -28,9 +28,10 @@ jobs:
           project_id: golden-resolver-455014-d8
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           export_default_credentials: true
-          
+
       - name: Auth GKE
         run: |
+          gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials interview-gke --region asia-southeast2 --project golden-resolver-455014-d8
 
       - name: Copy Theme to WordPress Pod
