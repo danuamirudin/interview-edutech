@@ -13,11 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout the repository
         uses: actions/checkout@v3
 
-      # Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -25,8 +23,8 @@ jobs:
 
       - name: Install gke-gcloud-auth-plugin
         run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin gcloud auth configure-docker kubectl
-
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
       - name: Auth GKE
         run: |
           gcloud container clusters get-credentials interview-gke --region asia-southeast2 --project golden-resolver-455014-d8
@@ -35,17 +33,9 @@ jobs:
         run: |
           kubectl cp interview/helm/wordpress/themes/edu.zip default/$(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}"):/var/www/html/wp-content/themes/
 
-      # Install and Activate Theme inside the pod
       - name: Install and Activate Theme
         run: |
           kubectl exec  $WP_POD -- bash -c "
             unzip -o /var/www/html/wp-content/themes/edu.zip -d /var/www/html/wp-content/themes/ &&
             wp theme activate edu --path=/var/www/html --url=https://darksoul.site
-          "
-
-      # Optional: Clear cache after updating theme
-      - name: Clear cache
-        run: |
-          kubectl exec $WP_POD -- bash -c "
-            wp cache flush --path=/var/www/html --url=https://darksoul.site
           "
