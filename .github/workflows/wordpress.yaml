@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  wordpress-deploy:
+  wordpress-theme-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,14 +28,10 @@ jobs:
         run: |
           gcloud container clusters get-credentials interview-gke --region asia-southeast2 --project golden-resolver-455014-d8
 
-      # Get the WordPress pod name dynamically
-      - name: Get WordPress Pod Name
-        run: echo "WP_POD=$(kubectl get pods  -l app=wordpress -o jsonpath='{.items[0].metadata.name}')" >> $GITHUB_ENV
-
       # Copy theme zip file to WordPress pod
       - name: Copy Theme to WordPress Pod
         run: |
-          kubectl cp interview/helm/wordpress/themes/edu.zip default/$WP_POD:/var/www/html/wp-content/themes/edu.zip
+          kubectl cp interview/helm/wordpress/themes/edu.zip default/$(kubectl get pod -l app=wordpress -o jsonpath="{.items[0].metadata.name}"):/var/www/html/wp-content/themes/
 
       # Install and Activate Theme inside the pod
       - name: Install and Activate Theme
